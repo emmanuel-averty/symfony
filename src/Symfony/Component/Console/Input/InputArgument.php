@@ -17,6 +17,7 @@ use Symfony\Component\Console\Completion\CompletionSuggestions;
 use Symfony\Component\Console\Completion\Suggestion;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Validator\Constraint;
 
 /**
  * Represents a command line argument.
@@ -49,6 +50,7 @@ class InputArgument
      * @param string                                                                        $description     A description text
      * @param string|bool|int|float|array|null                                              $default         The default value (for self::OPTIONAL mode only)
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
+     * @param list<Constraint>                                                              $constraints     The constraints the argument should respect
      *
      * @throws InvalidArgumentException When argument mode is not valid
      */
@@ -58,6 +60,7 @@ class InputArgument
         private string $description = '',
         string|bool|int|float|array|null $default = null,
         private \Closure|array $suggestedValues = [],
+        private array $constraints = [],
     ) {
         if (null === $mode) {
             $mode = self::OPTIONAL;
@@ -156,5 +159,15 @@ class InputArgument
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    /**
+     * Returns constraints the argument should respect
+     *
+     * @return list<Constraint>
+     */
+    public function getConstraints(): array
+    {
+        return $this->constraints;
     }
 }

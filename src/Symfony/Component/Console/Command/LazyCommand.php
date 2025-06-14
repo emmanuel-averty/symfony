@@ -20,6 +20,7 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Validator\Constraint;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -116,20 +117,22 @@ final class LazyCommand extends Command
 
     /**
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
+     * @param list<Constraint>                                                              $constraints     The constraints the argument value should respect
      */
-    public function addArgument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function addArgument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = [], array $constraints = []): static
     {
-        $this->getCommand()->addArgument($name, $mode, $description, $default, $suggestedValues);
+        $this->getCommand()->addArgument($name, $mode, $description, $default, $suggestedValues, $constraints);
 
         return $this;
     }
 
     /**
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
+     * @param list<Constraint>                                                              $constraints     The constraints the option value should respect
      */
-    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = [], array $constraints = []): static
     {
-        $this->getCommand()->addOption($name, $shortcut, $mode, $description, $default, $suggestedValues);
+        $this->getCommand()->addOption($name, $shortcut, $mode, $description, $default, $suggestedValues, $constraints);
 
         return $this;
     }
