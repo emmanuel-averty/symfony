@@ -17,6 +17,7 @@ use Symfony\Component\Console\Completion\CompletionSuggestions;
 use Symfony\Component\Console\Completion\Suggestion;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Validator\Constraint;
 
 /**
  * Represents a command line option.
@@ -60,6 +61,7 @@ class InputOption
      * @param int-mask-of<InputOption::*>|null                                              $mode            The option mode: One of the VALUE_* constants
      * @param string|bool|int|float|array|null                                              $default         The default value (must be null for self::VALUE_NONE)
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
+     * @param list<Constraint>                                                              $constraints     The constraints the option value should respect
      *
      * @throws InvalidArgumentException If option mode is invalid or incompatible
      */
@@ -70,6 +72,7 @@ class InputOption
         private string $description = '',
         string|bool|int|float|array|null $default = null,
         private array|\Closure $suggestedValues = [],
+        private array $constraints = [],
     ) {
         if (str_starts_with($name, '--')) {
             $name = substr($name, 2);
@@ -114,6 +117,9 @@ class InputOption
         }
         if ($this->isNegatable() && $this->acceptValue()) {
             throw new InvalidArgumentException('Impossible to have an option mode VALUE_NEGATABLE if the option also accepts a value.');
+        }
+        if ($this->hasConstraints() && !$this->acceptValue()) {
+            throw new InvalidArgumentException('Impossible to have constraints if the option also accepts a value.');
         }
 
         $this->setDefault($default);
@@ -258,5 +264,15 @@ class InputOption
             && $option->isValueRequired() === $this->isValueRequired()
             && $option->isValueOptional() === $this->isValueOptional()
         ;
+    }
+
+    public function getConstraints(): array
+    {
+        return $this->constraints;
+    }
+
+    public function hasConstraints(): bool
+    {
+        return count($this->constraints) > 0;
     }
 }

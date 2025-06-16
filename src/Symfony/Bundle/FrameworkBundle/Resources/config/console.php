@@ -42,6 +42,8 @@ use Symfony\Bundle\FrameworkBundle\Command\YamlLintCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\EventListener\SuggestMissingPackageSubscriber;
 use Symfony\Component\Console\EventListener\ErrorListener;
+use Symfony\Component\Console\EventListener\InputValidateListener;
+use Symfony\Component\Console\Input\InputViolationsFormater;
 use Symfony\Component\Console\Messenger\RunCommandMessageHandler;
 use Symfony\Component\Dotenv\Command\DebugCommand as DotenvDebugCommand;
 use Symfony\Component\Messenger\Command\ConsumeMessagesCommand;
@@ -62,6 +64,15 @@ use Symfony\Component\Validator\Command\DebugCommand as ValidatorDebugCommand;
 
 return static function (ContainerConfigurator $container) {
     $container->services()
+        ->set('console.input_violations_formater', InputViolationsFormater::class)
+
+        ->set('console.input_validate_listener', InputValidateListener::class)
+            ->args([
+                service('validator')->nullOnInvalid(),
+                service('console.input_violations_formater')
+            ])
+            ->tag('kernel.event_subscriber')
+
         ->set('console.error_listener', ErrorListener::class)
             ->args([
                 service('logger')->nullOnInvalid(),

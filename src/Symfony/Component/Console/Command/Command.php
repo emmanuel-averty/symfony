@@ -26,6 +26,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Validator\Constraint;
 
 /**
  * Base class for all commands.
@@ -404,15 +405,16 @@ class Command
      * @param                                                                               $mode            The argument mode: InputArgument::REQUIRED or InputArgument::OPTIONAL
      * @param                                                                               $default         The default value (for InputArgument::OPTIONAL mode only)
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
+     * @param list<Constraint>                                                              $constraints     The constraints the argument value should respect
      *
      * @return $this
      *
      * @throws InvalidArgumentException When argument mode is not valid
      */
-    public function addArgument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function addArgument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = [], array $constraints = []): static
     {
-        $this->definition->addArgument(new InputArgument($name, $mode, $description, $default, $suggestedValues));
-        $this->fullDefinition?->addArgument(new InputArgument($name, $mode, $description, $default, $suggestedValues));
+        $this->definition->addArgument(new InputArgument($name, $mode, $description, $default, $suggestedValues, $constraints));
+        $this->fullDefinition?->addArgument(new InputArgument($name, $mode, $description, $default, $suggestedValues, $constraints));
 
         return $this;
     }
@@ -424,15 +426,16 @@ class Command
      * @param                                                                               $mode            The option mode: One of the InputOption::VALUE_* constants
      * @param                                                                               $default         The default value (must be null for InputOption::VALUE_NONE)
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
+     * @param list<Constraint>                                                              $constraints     The constraints the option value should respect
      *
      * @return $this
      *
      * @throws InvalidArgumentException If option mode is invalid or incompatible
      */
-    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = [], array $constraints = []): static
     {
-        $this->definition->addOption(new InputOption($name, $shortcut, $mode, $description, $default, $suggestedValues));
-        $this->fullDefinition?->addOption(new InputOption($name, $shortcut, $mode, $description, $default, $suggestedValues));
+        $this->definition->addOption(new InputOption($name, $shortcut, $mode, $description, $default, $suggestedValues, $constraints));
+        $this->fullDefinition?->addOption(new InputOption($name, $shortcut, $mode, $description, $default, $suggestedValues, $constraints));
 
         return $this;
     }

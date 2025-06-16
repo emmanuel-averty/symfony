@@ -209,16 +209,16 @@ final class TraceableCommand extends Command implements SignalableCommandInterfa
         return $this->command->getNativeDefinition();
     }
 
-    public function addArgument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function addArgument(string $name, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = [], array $constraints = []): static
     {
-        $this->command->addArgument($name, $mode, $description, $default, $suggestedValues);
+        $this->command->addArgument($name, $mode, $description, $default, $suggestedValues, $constraints);
 
         return $this;
     }
 
-    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = []): static
+    public function addOption(string $name, string|array|null $shortcut = null, ?int $mode = null, string $description = '', mixed $default = null, array|\Closure $suggestedValues = [], array $constraints = []): static
     {
-        $this->command->addOption($name, $shortcut, $mode, $description, $default, $suggestedValues);
+        $this->command->addOption($name, $shortcut, $mode, $description, $default, $suggestedValues, $constraints);
 
         return $this;
     }
